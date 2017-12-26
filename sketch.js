@@ -3,7 +3,7 @@ let blockSize = 0;
 let blockSum= 0;
 
 let balls = [];
-let cantBalls = 10;
+let cantBalls = 1;
 let ballSize = 15;
 let ballPosA = 0;
 let ballPosB = 0;
@@ -23,6 +23,8 @@ let forceA = 0;
 let forceB = 0;
 
 let state = "start";
+
+let xPos = null
 
 
 function setup(){
@@ -58,15 +60,28 @@ function draw(){
     k++
   } else if (k < cantBalls * 10){
     k++
+  } else if (k == cantBalls * 10){
+    k = (cantBalls + 1 ) * 10
+  }
+
+
+  // Check when first ball touches ground
+  for (let i = 0; i < cantBalls; i++){
+    if (state == "moving" ) {
+      balls[i].check()
+    }
   }
 
   //Determina el estado del juego
-  if (!balls[0].velocity.equals(createVector(0,0))){
+  if (!balls[0].velocity.equals(createVector(0,0)) && balls[cantBalls - 1].velocity.equals(createVector(0,0))){
     state = "shooting"
-  } else if ((balls[cantBalls - 1].velocity.equals(createVector(0,0))) && state == "shooting") {
+  } else if (!balls[cantBalls - 1].velocity.equals(createVector(0,0))) {
+    state = "moving"
+  } else if ((balls[cantBalls - 1].velocity.equals(createVector(0,0))) && state == "moving") {
     state = "finished"
     nuevoNivel()
   }
+
 
   //Dibuja la linea de disparo
   if (mouseIsPressed && state != "shooting"){
@@ -85,7 +100,6 @@ function shoot(dir){
   k = 0;
   forceA = dir.x
   forceB = dir.y
-  console.log (forceA  + " " + forceB)
 }
 
 //Crea el primer punto para disparar las bolas
@@ -98,7 +112,6 @@ function createPointA(){
 //Determina el segundo punto para disparar y llama a shoot()
 function createPointB(){
   if (state != "shooting"){
-    console.log(pointC)
     shoot(pointC);
   }
 }
@@ -113,10 +126,15 @@ function createBlocks(prob){
 }
 
 function nuevoNivel(){
-
+  state = "waiting"
   for (let h = 0; h < bloques.length; h++){
     bloques[h].i += 1
   }
   createBlocks(0.8)
+  level += 1
+  balls.push(new ball(xPos,(height - ballSize), ballSize));
+  cantBalls += 1
+  xPos = null
+
 
 }

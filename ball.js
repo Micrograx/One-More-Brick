@@ -33,6 +33,16 @@ this.update = function(){
  	}
 }
 
+this.check = function(){
+	if (this.pos.y >= height - this.size ){
+		if (xPos == null){
+			xPos = this.pos.x
+		} else {
+			this.pos.x = xPos
+		}
+	}
+}
+
 this.draw = function(){
   ellipse(this.pos.x,this.pos.y,this.size);
 }
