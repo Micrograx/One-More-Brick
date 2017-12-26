@@ -36,9 +36,8 @@ function setup(){
   for (let i = 0; i < cantBalls; i++){
     balls.push(new ball(window.width / 2, 540, ballSize));
   }
-  for (let j = 0; j < columnas; j++){ //crear fila
-    bloques.push(new bloque(1,j,blockSize))
-  }
+
+  createBlocks(1)
 
 }
 
@@ -48,11 +47,12 @@ function draw(){
     balls[i].update();
     balls[i].draw();
   }
+
   for (let i = 0; i < bloques.length; i++){
     bloques[i].draw();
   }
 
-  //Le da acceleracion a las pelotas
+  //Le da acceleracion a las pelotas con varios frames de delay
   if (k % 10 == 0 && k < cantBalls * 10){
     balls[k / 10].applyForce(forceA,forceB);
     k++
@@ -63,8 +63,9 @@ function draw(){
   //Determina el estado del juego
   if (!balls[0].velocity.equals(createVector(0,0))){
     state = "shooting"
-  } else if (balls[cantBalls - 1].velocity.equals(createVector(0,0))){
-    state = "waiting"
+  } else if ((balls[cantBalls - 1].velocity.equals(createVector(0,0))) && state == "shooting") {
+    state = "finished"
+    nuevoNivel()
   }
 
   //Dibuja la linea de disparo
@@ -78,6 +79,7 @@ function draw(){
 
 
 }
+
 //Se encarga de dispara las pelotas
 function shoot(dir){
   k = 0;
@@ -101,6 +103,20 @@ function createPointB(){
   }
 }
 
+function createBlocks(prob){
+  for (let j = 0; j < columnas; j++){ //crear fila
+    let r = Math.random(0,1)
+    if (r < prob){
+        bloques.push(new bloque(1,j,blockSize))
+    }
+  }
+}
 
 function nuevoNivel(){
+
+  for (let h = 0; h < bloques.length; h++){
+    bloques[h].i += 1
+  }
+  createBlocks(0.8)
+
 }
