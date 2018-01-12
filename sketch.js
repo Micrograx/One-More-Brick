@@ -50,9 +50,8 @@ function draw(){
   background(150);
   for (let i = 0; i < cantBalls; i++){
     balls[i].update();
-    balls[i].collision()
     balls[i].draw();
-
+    //console.log("Loop")
   }
 
   for (let i = 0; i < bloques.length; i++){
@@ -70,6 +69,7 @@ function draw(){
   //Le da acceleracion a las pelotas con varios frames de delay
   if (k % 10 == 0 && k < cantBalls * 10){
     balls[k / 10].applyForce(forceA,forceB);
+    console.log("applied force")
     k++
   } else if (k < cantBalls * 10){
     k++
@@ -80,9 +80,7 @@ function draw(){
 
   // Check when first ball touches ground
   for (let i = 0; i < cantBalls; i++){
-    if (state == "moving" ) {
       balls[i].check()
-    }
   }
 
   //Collision and bounce code
@@ -91,7 +89,7 @@ function draw(){
   let moving = 0
   //Determina el estado del juego
   for (let i = 0; i < balls.length; i++){
-    if (!balls[i].velocity.equals(createVector(0,0))){
+    if (balls[i].state == "moving"){
       moving += 1
     }
   }

@@ -5,41 +5,69 @@ function ball(x,y,d) {
 	this.acceleration = createVector(0,0);
 	this.maxspeed = (d / 2) - 2;
 
+	this.state = "waiting"
+
 	this.size = d;
 
 	this.update = function(){
 
 		this.velocity.add(this.acceleration);
-	  this.velocity.limit(this.maxspeed);
-	  this.pos.add(this.velocity);
-	  this.acceleration.mult(0);
+		this.velocity.setMag(100)
 
-		// Bounce when touch the edge of the canvas
-		if (this.pos.x < 0) {
-			this.pos.x = 0;
-			this.velocity.x = -this.velocity.x;
+		while(!this.velocity.equals(createVector(0,0))){
+
+			this.temp = this.velocity.copy()
+			this.temp.limit(1)
+
+			// if (this.velocity.equals(createVector(0,0))){
+			// 	console.log("0")
+			// 	console.log(this.acceleration)
+			// 	console.log(this.velocity)
+			// }
+
+			this.pos.add(this.temp);
+			this.velocity.sub(this.temp)
+
+			this.collision()
+
+			// Bounce when touch the edge of the canvas
+			if (this.pos.x < 0) {
+				this.pos.x = 0;
+				this.velocity.x *= -1;
+				this.acceleration.x *= -1;
+				//this.velocity.x = -this.velocity.x;
+			}
+		 	if (this.pos.y < 0) {
+		 		this.pos.y = 0;
+		 		this.velocity.y *= -1;
+				this.acceleration.y *= -1;
+				//this.velocity.y = -this.velocity.y;
+		 	}
+		 	if (this.pos.x >= width - this.size) {
+		 		this.pos.x = width - this.size;
+		 		this.velocity.x *= -1
+				this.acceleration.x *= -1
+				//this.velocity.x = -this.velocity.x;
+		 	}
+		 	if (this.pos.y >= height - this.size) {
+		 		this.pos.y = height - this.size;
+		 		this.acceleration.mult(0);
+				this.state = "finished"
+		 	}
+
+
+
 		}
-	 	if (this.pos.y < 0) {
-	 		this.pos.y = 0;
-	 		this.velocity.y = -this.velocity.y;
-	 	}
-	 	if (this.pos.x > width - this.size) {
-	 		this.pos.x = width - this.size;
-	 		this.velocity.x = -this.velocity.x;
-	 	}
-	 	if (this.pos.y > height - this.size) {
-	 		this.pos.y = height - this.size;
-	 		this.velocity.mult(0);
-	 	}
 	}
 
 	this.check = function(){
-		if (this.pos.y >= height - this.size ){
+		if (this.state == "finished"){
 			if (xPos == null){
 				xPos = this.pos.x
 			} else {
 				this.pos.x = xPos
 			}
+			this.state = "waiting"
 		}
 	}
 
@@ -72,8 +100,14 @@ function ball(x,y,d) {
 			}
 		}
 
-		if (changeX) this.velocity.x = -this.velocity.x
-		if (changeY) this.velocity.y = -this.velocity.y
+		if (changeX) {
+			this.velocity.x *= -1;
+			this.acceleration.x *= -1
+		}
+		if (changeY) {
+			this.velocity.y *= -1;
+			this.acceleration.y *= -1
+		}
 
 	}
 
@@ -82,6 +116,7 @@ function ball(x,y,d) {
 	}
 
 	this.applyForce = function(x,y){
+		this.state = "moving"
   	this.acceleration = createVector(x,y);
 	}
 }
