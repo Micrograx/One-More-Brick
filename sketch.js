@@ -7,6 +7,7 @@ let cantBalls = 1;
 let ballSize = 15;
 let ballPosA = 0;
 let ballPosB = 0;
+let ballSpeedMag = 2000;
 
 let level = 1;
 
@@ -26,6 +27,8 @@ let state = "waiting";
 
 let xPos = null
 
+let v = 10
+
 
 function setup(){
   cnv = createCanvas(420,580);
@@ -39,11 +42,12 @@ function setup(){
   blockSize = (window.width / columnas) - 1;
 
   for (let i = 0; i < cantBalls; i++){
-    balls.push(new ball(window.width / 2, 540, ballSize));
+    balls.push(new ball(window.width / 2, 540, ballSize,ballSpeedMag));
   }
 
   createBlocks(0.5)
 
+  v = floor(map(ballSpeedMag,1,2000,10,1));
 }
 
 function draw(){
@@ -67,14 +71,17 @@ function draw(){
   }
 
   //Le da acceleracion a las pelotas con varios frames de delay
-  if (k % 10 == 0 && k < cantBalls * 10){
-    balls[k / 10].applyForce(forceA,forceB);
-    console.log("applied force")
-    k++
-  } else if (k < cantBalls * 10){
-    k++
-  } else if (k == cantBalls * 10){
-    k = (cantBalls + 1 ) * 10
+  if (state == "shooting"){
+
+    if (k % v == 0 && k < cantBalls * v){
+      balls[k / v].applyForce(forceA,forceB);
+      console.log("applied force")
+      k++
+    } else if (k < cantBalls * v){
+      k++
+    } else if (k == cantBalls * v){
+      k = (cantBalls + 1 ) * v
+    }
   }
 
 
@@ -117,11 +124,12 @@ function draw(){
 
 }
 
-//Se encarga de dispara las pelotas
+//Se encarga de disparar las pelotas
 function shoot(dir){
   k = 0;
   forceA = dir.x
   forceB = dir.y
+  state = "shooting"
 }
 
 //Crea el primer punto para disparar las bolas
@@ -155,7 +163,7 @@ function nuevoNivel(){
     bloques[h].i += 1
   }
   createBlocks(0.6)
-  balls.push(new ball(xPos,(height - ballSize), ballSize));
+  balls.push(new ball(xPos,(height - ballSize), ballSize,ballSpeedMag));
   cantBalls += 1
   xPos = null
 

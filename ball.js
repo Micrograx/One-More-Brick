@@ -1,9 +1,11 @@
-function ball(x,y,d) {
+function ball(x,y,d,m) {
 
 	this.pos = createVector(x,y);
 	this.velocity = createVector(0,0);
 	this.acceleration = createVector(0,0);
 	this.maxspeed = (d / 2) - 2;
+
+	this.mag = m;
 
 	this.state = "waiting"
 
@@ -12,7 +14,7 @@ function ball(x,y,d) {
 	this.update = function(){
 
 		this.velocity.add(this.acceleration);
-		this.velocity.setMag(100)
+		this.velocity.setMag(this.mag)
 
 		while(!this.velocity.equals(createVector(0,0))){
 
